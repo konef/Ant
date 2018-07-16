@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<project name="Project" default="run">
+	<!-- define names of directories -->
+     <property name="src" location="src"/>
+     <property name="build" location="build"/>
+     <property name="classes" location="${build}/classes"/>
+	<!-- define all targets -->
+	
+	<target name="compile">
+	<mkdir dir="build/classes"/>
+	<javac destdir="build/classes" includeantruntime="false">
+	<src path="src"/>
+	</javac>
+	</target>
+	<target name="run" depends="compile">
+	<java classname="HelloWorld" classpath="build/classes"/>
+	</target>
+	
+	<target name="package" depends="compile">
+	<mkdir dir="distr" />
+	<jar destfile="distr/${ant.project.name}.jar" basedir="${classes}" excludes="Test*.class">
+        <manifest>
+        <attribute name="Main-Class" value="${ant.project.name}"/>
+        </manifest>
+	</jar>
+	</target>
+
+	<target name="test-compile">
+	<mkdir dir="build/test-classes" />
+	<javac srcdir="test" destdir="build/test-classes" includeantruntime="false" >
+	<classpath>
+	<pathelement path="buld/classes" />
+	<fileset dir="lib" includes="*.jar" />
+	</classpath>
+	</javac>
+	</target>
+
+    <target name="test" depends="compile">
+	<junit printsummary="yes" haltonfailure="yes" fork="true" forkmode="once">
+	<classpath>
+	<fileset dir="lib" includes="*.jar" />
+	<pathelement path="build/test-classes" />
+	</classpath>
+    <test name="com.test.UnitTest" haltonfailure="no" outfile="result">
+	<formatter type="plain" />
+        <formatter type="xml" />
+            </test>
+	</junit>
+    </target>
+
+	<target name="clean">
+	  <delete dir="build"/>
+	<delete dir="${distr}"/>
+	</target>
+</project>
